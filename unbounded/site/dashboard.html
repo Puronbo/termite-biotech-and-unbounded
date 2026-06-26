@@ -87,6 +87,7 @@ footer .sig { color: var(--accent); }
 </select>
 </div>
 <button class="export-btn" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Chart</button>
+<button class="export-btn" id="downloadCsvBtn" style="background:var(--accent2)">Download CSV</button>
 <span class="subtitle">✦ Data is alive. Explore the science.</span>
 </header>
 
@@ -97,6 +98,7 @@ footer .sig { color: var(--accent); }
 </div>
 
 <div id="statsContainer" class="stats-grid"></div>
+<div id="summaryPanel" class="data-source" style="display:none;flex-direction:column;align-items:flex-start;gap:4px;font-size:13px;margin-bottom:16px;"></div>
 <div class="charts-grid" id="chartsGrid">
 <div class="chart-card"><h3 id="chartTitle1">Chart 1</h3><div class="chart-wrap"><canvas id="chart1"></canvas></div></div>
 <div class="chart-card"><h3 id="chartTitle2">Chart 2</h3><div class="chart-wrap"><canvas id="chart2"></canvas></div></div>
@@ -709,7 +711,8 @@ stats = buildCalibration(data);
 break;
 }
 if (stats) renderStats(stats);
-buildTable(data);
+  buildTable(data);
+  renderSummaryPanel(data);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -719,14 +722,53 @@ sel.addEventListener('change', () => loadFile(sel.value));
 loadFile(sel.value);
 
 document.getElementById('exportBtn').addEventListener('click', () => {
-const targetChart = chartInstances.c1 || chartInstances.c2;
-if (!targetChart) return;
-const link = document.createElement('a');
-link.download = 'biofuel-chart.png';
-link.href = targetChart.toBase64Image('image/png', 2);
-link.click();
+  const targetChart = chartInstances.c1 || chartInstances.c2;
+  if (!targetChart) return;
+  const canvas = targetChart.canvas;
+  const link = document.createElement('a');
+  link.download = 'biofuel-chart.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 });
+
+document.getElementById('downloadCsvBtn').addEventListener('click', () => {
+  const fileKey = document.getElementById('fileSelect').value;
+  const csv = CSV_DATA[fileKey];
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = fileKey + '.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
 });
+
+});
+
+function renderSummaryPanel(data) {
+  const panel = document.getElementById('summaryPanel');
+  const rows = data.rows;
+  const headers = data.headers;
+  if (!rows || rows.length === 0) { panel.style.display = 'none'; return; }
+  const totalRows = rows.length;
+  const numericCols = headers.filter(h => rows.some(r => !isNaN(parseFloat(r[h]))));
+  let html = '<strong style="color:var(--accent);font-size:14px;">Data Summary</strong><br>';
+  html += '<span>Total rows: <strong>' + totalRows + '</strong></span><br>';
+  numericCols.forEach(h => {
+    const vals = rows.map(r => parseFloat(r[h])).filter(v => !isNaN(v));
+    if (vals.length === 0) return;
+    const mn = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const lo = Math.min(...vals);
+    const hi = Math.max(...vals);
+    html += '<span><strong>' + h + '</strong>: mean=' + mn.toFixed(2) + ', range=[' + lo.toFixed(2) + ', ' + hi.toFixed(2) + ']</span><br>';
+  });
+  let missing = 0;
+  rows.forEach(r => { headers.forEach(h => { if (r[h] === undefined || r[h] === null || r[h].toString().trim() === '') missing++; }); });
+  const quality = missing === 0 ? 'Complete' : missing + ' missing value(s)';
+  const qc = missing === 0 ? 'var(--success)' : 'var(--accent2)';
+  html += '<span>Data quality: <strong style="color:' + qc + '">' + quality + '</strong></span>';
+  panel.innerHTML = html;
+  panel.style.display = 'flex';
+}
 </script>
 </body>
 </html>

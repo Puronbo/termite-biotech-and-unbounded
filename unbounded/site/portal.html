@@ -978,12 +978,88 @@ body {
     height: 260px;
   }
 }
+
+/* ─── PARTICLE CANVAS ─── */
+#particle-canvas {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── KEYBOARD HELP OVERLAY ─── */
+#keyboard-help {
+  position: fixed;
+  bottom: 140px;
+  right: 76px;
+  z-index: 55;
+  background: rgba(8,8,12,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  min-width: 200px;
+  display: none;
+  font-family: 'Inter', sans-serif;
+}
+
+#keyboard-help.visible {
+  display: block;
+}
+
+#keyboard-help .kh-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent2);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#keyboard-help .kh-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+#keyboard-help .kh-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 24px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--fg);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ─── GUESTBOOK ALTERNATING ─── */
+.garden-entry:nth-child(odd) {
+  background: rgba(255,255,255,0.025);
+}
+
+@media (max-width: 900px) {
+  #keyboard-help {
+    bottom: 130px;
+    right: 16px;
+    min-width: 180px;
+  }
+}
 </style>
 </head>
 <body>
 
 <div id="progress-bar"></div>
 <canvas id="stars-canvas"></canvas>
+<canvas id="particle-canvas"></canvas>
 
 <nav id="section-nav">
   <button class="nav-item active" data-section="hero">
@@ -2103,8 +2179,144 @@ body {
     requestAnimationFrame(tick);
   });
 
+  /* ─── FEATURE 1: PARTICLE / STARFIELD BACKGROUND ─── */
+  const particleCanvas = document.getElementById('particle-canvas');
+  const particleCtx = particleCanvas.getContext('2d');
+
+  particleCanvas.width = window.innerWidth;
+  particleCanvas.height = window.innerHeight;
+
+  const PARTICLES = [];
+  const PARTICLE_COUNT = 90;
+  const PARTICLE_COLORS = ['#ff6b35', '#7c3aed', '#60a5fa', '#ffffff'];
+
+  function initParticles() {
+    PARTICLES.length = 0;
+    const w = particleCanvas.width;
+    const h = particleCanvas.height;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      PARTICLES.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 2 + 1,
+        speed: 0.15 + Math.random() * 0.3,
+        driftX: (Math.random() - 0.5) * 0.3,
+        color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+        alpha: 0.15 + Math.random() * 0.35,
+        para: 0.2 + Math.random() * 0.6
+      });
+    }
+  }
+
+  let pMouseX = 0, pMouseY = 0;
+
+  document.addEventListener('mousemove', function(e) {
+    pMouseX = e.clientX;
+    pMouseY = e.clientY;
+  });
+
+  function drawParticles() {
+    const w = particleCanvas.width;
+    const h = particleCanvas.height;
+    particleCtx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const px = (pMouseX - cx) / cx * 6;
+    const py = (pMouseY - cy) / cy * 6;
+
+    for (const p of PARTICLES) {
+      p.y -= p.speed;
+      p.x += p.driftX;
+
+      if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+      if (p.x < -10) p.x = w + 10;
+      if (p.x > w + 10) p.x = -10;
+
+      const sx = p.x + px * p.para;
+      const sy = p.y + py * p.para;
+
+      particleCtx.beginPath();
+      particleCtx.arc(sx, sy, p.r, 0, Math.PI * 2);
+      particleCtx.fillStyle = p.color;
+      particleCtx.globalAlpha = p.alpha;
+      particleCtx.fill();
+
+      particleCtx.beginPath();
+      particleCtx.arc(sx, sy, p.r * 3, 0, Math.PI * 2);
+      particleCtx.fillStyle = p.color;
+      particleCtx.globalAlpha = p.alpha * 0.15;
+      particleCtx.fill();
+    }
+    particleCtx.globalAlpha = 1;
+  }
+
+  initParticles();
+
+  /* ─── FEATURE 2: KEYBOARD NAVIGATION ─── */
+  function showKeyboardHelp() {
+    document.getElementById('keyboard-help').classList.toggle('visible');
+  }
+
+  document.addEventListener('keydown', function(e) {
+    const key = e.key;
+    if (key === '1') document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+    else if (key === '2') document.getElementById('gifts').scrollIntoView({ behavior: 'smooth' });
+    else if (key === '3') document.getElementById('garden').scrollIntoView({ behavior: 'smooth' });
+    else if (key === '4') document.getElementById('network').scrollIntoView({ behavior: 'smooth' });
+    else if (key === '5') document.getElementById('explore').scrollIntoView({ behavior: 'smooth' });
+    else if (key === '0') window.scrollTo({ top: 0, behavior: 'smooth' });
+    else if (key === 'M' || key === 'm') toggleSound();
+    else if (key === '?') showKeyboardHelp();
+  });
+
+  /* ─── FEATURE 3: ENHANCED GUESTBOOK ─── */
+  formatDate = function(iso) {
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+        ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    } catch(e) {
+      return iso;
+    }
+  };
+
+  gardenEmpty.textContent = 'Be the first to leave a mark';
+
+  renderGarden();
+
+  const gd = getGarden();
+  gardenCount.textContent = gd.length > 0
+    ? 'You are visitor #' + gd.length
+    : 'Be the first to leave a mark';
+
+  /* ─── PARTICLE RESIZE ─── */
+  window.addEventListener('resize', debounce(function() {
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+    initParticles();
+  }, 150));
+
+  /* ─── PARTICLE ANIMATION LOOP ─── */
+  function particleLoop() {
+    drawParticles();
+    requestAnimationFrame(particleLoop);
+  }
+  requestAnimationFrame(particleLoop);
+
 })();
 </script>
+
+<div id="keyboard-help">
+  <div class="kh-header">Keyboard Shortcuts</div>
+  <div class="kh-row"><span class="kh-key">1</span> Welcome</div>
+  <div class="kh-row"><span class="kh-key">2</span> Gifts</div>
+  <div class="kh-row"><span class="kh-key">3</span> Guestbook</div>
+  <div class="kh-row"><span class="kh-key">4</span> Knowledge Map</div>
+  <div class="kh-row"><span class="kh-key">5</span> Explore</div>
+  <div class="kh-row"><span class="kh-key">0</span> Scroll to top</div>
+  <div class="kh-row"><span class="kh-key">M</span> Toggle ambient sound</div>
+  <div class="kh-row"><span class="kh-key">?</span> Toggle this help</div>
+</div>
 
 </body>
 </html>
