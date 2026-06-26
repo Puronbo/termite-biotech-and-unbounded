@@ -165,6 +165,119 @@ body {
   box-shadow: 0 0 20px rgba(124,58,237,0.2);
 }
 
+/* ─── SEARCH TOGGLE ─── */
+#search-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 51;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(8,8,12,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+}
+#search-toggle:hover {
+  color: var(--fg);
+  border-color: var(--accent3);
+  transform: scale(1.05);
+}
+
+/* ─── SEARCH OVERLAY ─── */
+#search-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(8,8,12,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 1.5rem 2rem 1rem;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+  border-bottom: 1px solid var(--border);
+}
+#search-overlay.active {
+  transform: translateY(0);
+}
+#search-overlay input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--fg);
+  font-size: 1.1rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#search-overlay input:focus {
+  border-color: var(--accent2);
+}
+#search-overlay .sr-hint {
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
+}
+#search-results {
+  margin-top: 0.75rem;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+#search-results .sr-item {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--fg);
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+#search-results .sr-item:hover,
+#search-results .sr-item.highlight {
+  background: rgba(124,58,237,0.15);
+}
+#search-results .sr-item .sr-loc {
+  color: var(--accent);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 0.5rem;
+}
+#search-results .sr-item mark {
+  background: rgba(255,107,53,0.3);
+  color: var(--accent);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+#search-results .sr-empty {
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 1rem 0.5rem;
+}
+
+@media (max-width: 600px) {
+  #search-toggle {
+    bottom: 72px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  #search-overlay {
+    padding: 1rem 1rem 0.5rem;
+  }
+}
+
 /* ─── SCROLL CONTAINER ─── */
 .scroll-container {
   position: relative;
@@ -1092,7 +1205,8 @@ body {
   </button>
 </nav>
 
-<button id="sound-toggle" title="Toggle ambient sound">♫</button>
+<button id="sound-toggle" title="Toggle ambient sound (M)">♫</button>
+<button id="search-toggle" title="Search page (/)">⌕</button>
 <button id="guide-btn" title="Guide">✦</button>
 
 <div id="network-tooltip" class="network-tooltip"></div>
@@ -1939,11 +2053,13 @@ body {
 
   /* ─── AMBIENT SOUND ─── */
   let audioCtx = null;
-  let osc1 = null;
-  let osc2 = null;
+  let oscs = [];
+  let lfo = null;
   let gainNode = null;
   let filterNode = null;
+  let delayNode = null;
   let soundOn = false;
+  let soundAnimId = null;
 
   const soundToggle = document.getElementById('sound-toggle');
 
@@ -1951,27 +2067,64 @@ body {
     if (audioCtx) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      osc1 = audioCtx.createOscillator();
-      osc2 = audioCtx.createOscillator();
+
       gainNode = audioCtx.createGain();
-      filterNode = audioCtx.createBiquadFilter();
-
-      osc1.type = 'sine';
-      osc1.frequency.value = 55;
-      osc2.type = 'sine';
-      osc2.frequency.value = 82.5;
-      filterNode.type = 'lowpass';
-      filterNode.frequency.value = 200;
-      filterNode.Q.value = 1;
       gainNode.gain.value = 0;
-      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
-      osc1.connect(filterNode);
-      osc2.connect(filterNode);
+      filterNode = audioCtx.createBiquadFilter();
+      filterNode.type = 'lowpass';
+      filterNode.frequency.value = 180;
+      filterNode.Q.value = 0.8;
+
+      delayNode = audioCtx.createDelay(1.0);
+      delayNode.delayTime.value = 0.35;
+      const feedback = audioCtx.createGain();
+      feedback.gain.value = 0.15;
+
+      lfo = audioCtx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.08;
+      const lfoGain = audioCtx.createGain();
+      lfoGain.gain.value = 8;
+      lfo.connect(lfoGain);
+      lfo.start();
+
+      const tones = [
+        { freq: 55, type: 'triangle', gain: 0.025 },
+        { freq: 82.5, type: 'triangle', gain: 0.02 },
+        { freq: 110, type: 'sine', gain: 0.015 },
+        { freq: 65.4, type: 'sine', gain: 0.012 },
+      ];
+      oscs = tones.map(t => {
+        const o = audioCtx.createOscillator();
+        o.type = t.type;
+        o.frequency.value = t.freq;
+        const g = audioCtx.createGain();
+        g.gain.value = t.gain;
+        lfoGain.connect(o.frequency);
+        o.connect(g);
+        g.connect(filterNode);
+        o.start();
+        return { osc: o, gain: g };
+      });
+
       filterNode.connect(gainNode);
       gainNode.connect(audioCtx.destination);
-      osc1.start();
-      osc2.start();
+      gainNode.connect(delayNode);
+      delayNode.connect(gainNode);
+
+      function drift() {
+        oscs.forEach((o, i) => {
+          const driftAmt = 1 + (Math.random() - 0.5) * 0.004;
+          o.osc.frequency.setTargetAtTime(
+            tones[i].freq * driftAmt,
+            audioCtx.currentTime,
+            2 + Math.random() * 4
+          );
+        });
+        soundAnimId = setTimeout(drift, 3000 + Math.random() * 4000);
+      }
+      drift();
 
       soundToggle.classList.add('active');
       soundToggle.textContent = '♪';
@@ -1986,8 +2139,8 @@ body {
     if (!gainNode || !audioCtx) return;
     const now = audioCtx.currentTime;
     gainNode.gain.cancelScheduledValues(now);
-    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-    gainNode.gain.linearRampToValueAtTime(0.04, now + 1.5);
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.045, now + 2);
   }
 
   function fadeOutSound() {
@@ -1995,7 +2148,8 @@ body {
     const now = audioCtx.currentTime;
     gainNode.gain.cancelScheduledValues(now);
     gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-    gainNode.gain.linearRampToValueAtTime(0, now + 1);
+    gainNode.gain.linearRampToValueAtTime(0, now + 1.2);
+    if (soundAnimId) { clearTimeout(soundAnimId); soundAnimId = null; }
   }
 
   function toggleSound() {
@@ -2304,7 +2458,113 @@ body {
   requestAnimationFrame(particleLoop);
 
 })();
+  /* ─── SEARCH ─── */
+  const searchOverlay = document.getElementById('search-overlay');
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchToggle = document.getElementById('search-toggle');
+  let searchActive = false;
+  let searchIdx = -1;
+
+  function getSearchableText() {
+    const sections = document.querySelectorAll('.card, .section, .section-card, h1, h2, h3, p, li, .stat-card, .gift-card');
+    const items = [];
+    sections.forEach(el => {
+      const text = el.textContent.trim();
+      if (text.length > 10) {
+        const id = el.id || el.closest('[id]')?.id || '';
+        const tag = el.tagName;
+        let loc = id ? id.toUpperCase() : tag;
+        if (loc === 'H1' || loc === 'H2' || loc === 'H3') loc = 'HEADING';
+        items.push({ text: text.substring(0, 300), el: el, loc: loc });
+      }
+    });
+    return items;
+  }
+
+  let searchData = [];
+  function doSearch(query) {
+    const q = query.toLowerCase().trim();
+    if (!q || q.length < 2) { searchResults.innerHTML = ''; return; }
+    const matches = searchData.filter(d => d.text.toLowerCase().includes(q));
+    if (matches.length === 0) {
+      searchResults.innerHTML = '<div class="sr-empty">No results found</div>';
+      return;
+    }
+    let html = '';
+    matches.forEach((m, i) => {
+      const idx = m.text.toLowerCase().indexOf(q);
+      const before = m.text.substring(Math.max(0, idx - 20), idx);
+      const matched = m.text.substring(idx, idx + q.length);
+      const after = m.text.substring(idx + q.length, idx + q.length + 60);
+      const display = (before ? '…' : '') + before + '<mark>' + matched + '</mark>' + after + (after.length < 60 ? '' : '…');
+      html += '<div class="sr-item" data-idx="' + i + '"><span class="sr-loc">' + m.loc + '</span>' + display + '</div>';
+    });
+    searchResults.innerHTML = html;
+    searchIdx = -1;
+    searchResults.querySelectorAll('.sr-item').forEach(el => {
+      el.addEventListener('click', function() {
+        const idx = parseInt(this.dataset.idx);
+        matches[idx].el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        closeSearch();
+      });
+    });
+  }
+
+  function openSearch() {
+    searchActive = true;
+    searchOverlay.classList.add('active');
+    searchData = getSearchableText();
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    setTimeout(() => searchInput.focus(), 100);
+  }
+
+  function closeSearch() {
+    searchActive = false;
+    searchOverlay.classList.remove('active');
+    searchInput.blur();
+  }
+
+  searchToggle.addEventListener('click', () => {
+    if (searchActive) closeSearch(); else openSearch();
+  });
+
+  searchInput.addEventListener('input', function() { doSearch(this.value); });
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeSearch(); return; }
+    const items = searchResults.querySelectorAll('.sr-item');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      searchIdx = Math.min(searchIdx + 1, items.length - 1);
+      items.forEach((el, i) => el.classList.toggle('highlight', i === searchIdx));
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      searchIdx = Math.max(searchIdx - 1, -1);
+      items.forEach((el, i) => el.classList.toggle('highlight', i === searchIdx));
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchIdx >= 0 && searchIdx < items.length) items[searchIdx].click();
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === '/' && !searchActive && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+      e.preventDefault();
+      openSearch();
+    }
+  });
+})();
 </script>
+
+<div id="search-overlay">
+  <input type="text" id="search-input" placeholder="Search this page..." autocomplete="off" spellcheck="false">
+  <div class="sr-hint">Press <kbd>Enter</kbd> to navigate, <kbd>↑</kbd><kbd>↓</kbd> for results, <kbd>Esc</kbd> to close</div>
+  <div id="search-results"></div>
+</div>
 
 <div id="keyboard-help">
   <div class="kh-header">Keyboard Shortcuts</div>
@@ -2314,6 +2574,7 @@ body {
   <div class="kh-row"><span class="kh-key">4</span> Knowledge Map</div>
   <div class="kh-row"><span class="kh-key">5</span> Explore</div>
   <div class="kh-row"><span class="kh-key">0</span> Scroll to top</div>
+  <div class="kh-row"><span class="kh-key">/</span> Search page</div>
   <div class="kh-row"><span class="kh-key">M</span> Toggle ambient sound</div>
   <div class="kh-row"><span class="kh-key">?</span> Toggle this help</div>
 </div>

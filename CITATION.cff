@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "Termite Research Initiative + UNBOUNDED"
+message: "If you use this research in your work, please cite this repository."
+type: software
+authors:
+  - name: "The Termite Research Initiative"
+    affiliation: "Independent Research"
+repository-code: "https://github.com/Puronbo/termite-biotech-and-unbounded"
+abstract: "A unified repository containing the Termite Research Initiative — a Philippine-based biotechnology project isolating cellulose-degrading enzymes and microbial consortia from termite gut bacteria for biofuel, natural pest control, and sustainable protein production — alongside the UNBOUNDED new media platform vision."
+keywords:
+  - termite biotechnology
+  - biofuel
+  - cellulase enzymes
+  - pest control
+  - termite farming
+  - new media
+  - generative AI
+  - open science
+license: "CC-BY-NC-SA-4.0"
+date-released: 2026-06-27
