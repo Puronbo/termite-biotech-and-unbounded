@@ -11,13 +11,108 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/dashboard.html</loc>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/index.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/index.html</loc>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/dashboard.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/unbounded/welcome.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/unbounded/governance.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/unbounded/contributing.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/unbounded/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/docs/manifesto.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/docs/platform-blueprint.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/docs/roadmap.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/docs/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite/master-summary.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite/cross-verification.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite/readme.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite/lab-notebook.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite/pitch.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/calls/open-letter.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/calls/for-developers.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/calls/for-creatives.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/calls/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

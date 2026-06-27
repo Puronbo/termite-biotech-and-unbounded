@@ -18,6 +18,7 @@
 <meta name="theme-color" content="#0e0e16">
 <title>UNBOUNDED Portal — Termite Research & New Media</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -25,12 +26,11 @@
   --bg: #08080c;
   --fg: #e0e0ec;
   --muted: #7878a0;
-  --accent: #ff6b35;
-  --accent2: #7c3aed;
+  --accent: #7c3aed;
+  --accent2: #ff6b35;
   --accent3: #60a5fa;
   --border: rgba(255,255,255,0.05);
   --glow: rgba(124,58,237,0.15);
-  --nav-w: 64px;
 }
 
 body {
@@ -132,11 +132,167 @@ body {
   margin-left: 4px;
 }
 
+/* ─── INSTALL PROMPT ─── */
+.install-prompt {
+  position: fixed;
+  bottom: 130px;
+  right: 24px;
+  z-index: 52;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(8,8,12,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: var(--fg);
+  animation: slideUp 0.4s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.install-prompt span { color: var(--muted); }
+.install-prompt button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.install-prompt button:hover { background: #6d28d9; transform: scale(1.03); }
+.install-prompt .ip-dismiss {
+  background: none;
+  color: var(--muted);
+  padding: 4px 6px;
+  font-size: 0.9rem;
+}
+.install-prompt .ip-dismiss:hover { background: rgba(255,255,255,0.05); color: var(--fg); transform: none; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ─── OFFLINE INDICATOR ─── */
+.offline-indicator {
+  position: fixed;
+  bottom: 130px;
+  right: 24px;
+  z-index: 52;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,107,53,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--accent2);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  color: var(--accent2);
+  font-weight: 500;
+  animation: slideUp 0.4s ease;
+}
+.offline-indicator .oi-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent2);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ─── SEED SHARE ─── */
+.seed-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  margin-top: 4px;
+}
+.seed-share-btn:hover { border-color: var(--accent); color: var(--fg); background: rgba(124,58,237,0.08); }
+.seed-share-btn.copied { border-color: var(--success); color: var(--success); }
+
+#seed-modal {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#seed-modal.visible { opacity: 1; pointer-events: auto; }
+#seed-modal .sm-card {
+  background: #0e0e16;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+#seed-modal .sm-card .sm-seed { font-size: 3rem; margin-bottom: 8px; }
+#seed-modal .sm-card .sm-name { font-size: 1.1rem; font-weight: 700; color: var(--fg); }
+#seed-modal .sm-card .sm-msg { color: var(--muted); font-size: 0.9rem; margin: 8px 0 16px; line-height: 1.5; }
+#seed-modal .sm-card .sm-footer { font-size: 0.7rem; color: var(--muted); opacity: 0.5; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+#seed-modal .sm-card .sm-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+#seed-modal .sm-card .sm-actions button {
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 8px; padding: 8px 18px; font-size: 0.8rem;
+  font-weight: 600; cursor: pointer; transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+#seed-modal .sm-card .sm-actions button:hover { background: #6d28d9; transform: translateY(-1px); }
+#seed-modal .sm-card .sm-actions .sm-close { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+#seed-modal .sm-card .sm-actions .sm-close:hover { background: rgba(255,255,255,0.05); color: var(--fg); transform: none; }
+#seed-canvas { display: none; }
+
+/* ─── DAILY DISCOVERY ─── */
+.daily-discovery {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1rem;
+  padding: 8px 16px;
+  background: rgba(124,58,237,0.08);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.daily-discovery:hover {
+  background: rgba(124,58,237,0.15);
+  border-color: var(--accent);
+  color: var(--fg);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124,58,237,0.15);
+}
+.daily-discovery .dd-icon { font-size: 1rem; }
+.daily-discovery .dd-title { color: var(--accent); font-weight: 600; }
+.daily-discovery .dd-label { font-size: 0.7rem; color: var(--muted); }
+
 /* ─── AMBIENT TOGGLE ─── */
 #sound-toggle {
   position: fixed;
-  bottom: 24px;
-  right: 76px;
+  bottom: 76px;
+  right: 24px;
   z-index: 51;
   width: 44px;
   height: 44px;
@@ -171,7 +327,7 @@ body {
 #search-toggle {
   position: fixed;
   bottom: 24px;
-  right: 24px;
+  right: 76px;
   z-index: 51;
   width: 44px;
   height: 44px;
@@ -728,7 +884,7 @@ body {
 }
 
 .modal-confirm {
-  background: linear-gradient(135deg, var(--accent), #e05530);
+  background: linear-gradient(135deg, var(--accent2), #e05530);
   color: white;
 }
 
@@ -1231,9 +1387,13 @@ body {
   outline: 2px solid var(--accent2);
   outline-offset: 2px;
 }
-button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
-  outline: 2px solid var(--accent2);
-  outline-offset: 2px;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+@media print {
+  body { background: #fff; color: #000; }
+  #section-nav, #sound-toggle, #search-toggle, #guide-btn, #random-btn, #browse-docs-btn, #guide-popup, #keyboard-help, #progress-bar, #stars-canvas, #particle-canvas, #search-overlay, .welcome-overlay, .confetti-container, .network-tooltip { display: none !important; }
+  .hero-title, .welcome-box h2 { -webkit-text-fill-color: initial; background: none; color: #000; }
 }
 </style>
 </head>
@@ -1328,7 +1488,32 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   </button>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="alert"></div>
+
+<div id="install-prompt" class="install-prompt" hidden>
+  <span>Install UNBOUNDED</span>
+  <button id="install-btn">Install</button>
+  <button class="ip-dismiss" id="install-dismiss">✕</button>
+</div>
+<div class="offline-indicator" id="offline-indicator" hidden>
+  <span class="oi-dot"></span>
+  Offline — cached content
+</div>
+
+<div id="seed-modal">
+  <div class="sm-card">
+    <div class="sm-seed" id="sm-seed">🌱</div>
+    <div class="sm-name" id="sm-name">Anonymous</div>
+    <div class="sm-msg" id="sm-msg">Your message here.</div>
+    <div class="sm-footer">✦ UNBOUNDED — a gift from everything that was built</div>
+    <div class="sm-actions">
+      <button id="sm-download">Download Card</button>
+      <button id="sm-copy">Copy Link</button>
+      <button class="sm-close" id="sm-close">Close</button>
+    </div>
+  </div>
+</div>
+<canvas id="seed-canvas"></canvas>
 
 <div class="scroll-container">
 
@@ -1340,6 +1525,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       <div class="scroll-indicator" onclick="document.getElementById('gifts').scrollIntoView({behavior:'smooth'})">
         scroll ↓
       </div>
+      <a class="daily-discovery" id="daily-discovery" target="_blank" hidden>
+        <span class="dd-icon">🌱</span>
+        <span class="dd-label">Today's Discovery —</span>
+        <span class="dd-title" id="dd-title">Loading...</span>
+      </a>
     </div>
   </section>
 
@@ -1632,7 +1822,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       if (opts.order) params += '&order=' + opts.order;
       if (opts.limit) params += '&limit=' + opts.limit;
     }
-    return fetch(SB_URL + '/rest/v1/' + table + '?' + params, { headers: SB_HEADERS }).then(function(r) { return r.json(); });
+    return fetch(SB_URL + '/rest/v1/' + table + '?' + params, { headers: SB_HEADERS }).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   }
 
   function sbPost(table, data) {
@@ -1658,21 +1848,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   function lsSet(key, val) {
     try { localStorage.setItem(key, val); } catch(e) { /* storage unavailable */ }
   }
-  function lsRemove(key) {
-    try { localStorage.removeItem(key); } catch(e) { /* storage unavailable */ }
-  }
-
   /* ─── SESSION INIT ─── */
   var sessionId = lsGet('unbounded-session', '');
   if (!sessionId) {
     sessionId = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     lsSet('unbounded-session', sessionId);
   }
-  sbPost('page_views', { page: 'portal', session_id: sessionId });
-  sbUpsert('sessions', { id: sessionId, last_active: new Date().toISOString() }, 'id');
+  sbPost('page_views', { page: 'portal', session_id: sessionId }).catch(function(){});
+  sbUpsert('sessions', { id: sessionId, last_active: new Date().toISOString() }, 'id').catch(function(){});
   var lastBeat = lsGet('unbounded-heartbeat', '');
   if (!lastBeat || Date.now() - parseInt(lastBeat) > 86400000) {
-    sbPost('heartbeats', {});
+    sbPost('heartbeats', {}).catch(function(){});
     lsSet('unbounded-heartbeat', '' + Date.now());
   }
 
@@ -1682,8 +1868,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   let stars = [];
   let shootingStars = [];
   let mouseX = 0, mouseY = 0;
-  let starTime = 0;
-
   starCanvas.width = window.innerWidth;
   starCanvas.height = window.innerHeight;
 
@@ -1750,7 +1934,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   }
 
   function drawStars(time) {
-    starTime = time;
     starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
     const cx = starCanvas.width / 2;
     const cy = starCanvas.height / 2;
@@ -1772,8 +1955,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       const progress = ss.life / ss.maxLife;
       const alpha = 1 - progress;
       const tailLen = ss.tail * (1 - progress * 0.5);
-      const ex = ss.x - ss.vx / Math.sqrt(ss.vx*ss.vx+ss.vy*ss.vy) * tailLen;
-      const ey = ss.y - ss.vy / Math.sqrt(ss.vx*ss.vx+ss.vy*ss.vy) * tailLen;
+      var mag = Math.sqrt(ss.vx*ss.vx + ss.vy*ss.vy);
+      const ex = ss.x - ss.vx / mag * tailLen;
+      const ey = ss.y - ss.vy / mag * tailLen;
       const grad = starCtx.createLinearGradient(ss.x, ss.y, ex, ey);
       grad.addColorStop(0, `rgba(255,255,255,${alpha * 0.9})`);
       grad.addColorStop(1, `rgba(180,200,255,0)`);
@@ -1789,13 +1973,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   document.addEventListener('mousemove', function(e) {
     mouseX = e.clientX;
     mouseY = e.clientY;
+    pMouseX = e.clientX;
+    pMouseY = e.clientY;
   });
 
   /* ─── PROGRESS BAR ─── */
   const progressBar = document.getElementById('progress-bar');
   function updateProgress() {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (!progressBar) return;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - window.innerHeight;
     const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
     progressBar.style.width = pct + '%';
   }
@@ -1875,11 +2062,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
         div.className = 'garden-entry';
         div.innerHTML =
           '<div class="entry-header">' +
-            '<span class="entry-seed">' + (entry.seed || '🌱') + '</span>' +
+            '<span class="entry-seed">' + escapeHtml(entry.seed || '🌱') + '</span>' +
             '<span class="entry-name">' + escapeHtml(entry.name || 'Anonymous') + '</span>' +
             '<span class="entry-date">' + formatDate(entry.date) + '</span>' +
           '</div>' +
           '<div class="entry-message">' + escapeHtml(entry.message) + '</div>';
+        var shareBtn = document.createElement('button');
+        shareBtn.className = 'seed-share-btn';
+        shareBtn.textContent = '✦ Share this seed';
+        shareBtn.addEventListener('click', function() {
+          openSeedModal(entry.seed || '🌱', entry.name || 'Anonymous', entry.message);
+        });
+        div.appendChild(shareBtn);
         gardenEntries.appendChild(div);
       });
     }
@@ -1893,7 +2087,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   }
 
   function spawnConfetti() {
+    if (!gardenSubmit) return;
     const container = document.getElementById('confetti-container');
+    if (!container) return;
     const colors = ['#ff6b35','#7c3aed','#60a5fa','#10b981','#f59e0b','#ec4899','#8b5cf6','#22d3ee'];
     const rect = gardenSubmit.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -1981,7 +2177,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       'Your voice is now part of the garden. ' + count + ' ' + (count === 1 ? 'person has' : 'people have') + ' left their mark before you.'
     );
 
-    sbPost('guestbook_entries', { name: name, message: message, seed: seed });
+    sbPost('guestbook_entries', { name: name, message: message, seed: seed }).catch(function(){});
   });
 
   gardenClearBtn.addEventListener('click', function() {
@@ -2006,8 +2202,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
   /* ─── NETWORK (KNOWLEDGE MAP) ─── */
   const netCanvas = document.getElementById('network-canvas');
-  const netCtx = netCanvas.getContext('2d');
   const netTooltip = document.getElementById('network-tooltip');
+  const netCtx = netCanvas ? netCanvas.getContext('2d') : null;
 
   const netNodes = [
     { id: 'termite', label: 'Termite\nProject', x: 0.18, y: 0.35, desc: '7 bacterial strains, 89.4% conversion, real science' },
@@ -2034,10 +2230,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     ['future','vision']
   ];
 
-  let netHovered = null;
-  let netAnimId = null;
+  var nodeMap = {};
+  netNodes.forEach(function(n) { nodeMap[n.id] = n; });
 
+  let netHovered = null;
   function resizeNetCanvas() {
+    if (!netCanvas || !netCtx) return;
     const rect = netCanvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     netCanvas.width = rect.width * dpr;
@@ -2069,8 +2267,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     }
 
     netEdges.forEach(function(edge) {
-      const n1 = netNodes.find(function(n) { return n.id === edge[0]; });
-      const n2 = netNodes.find(function(n) { return n.id === edge[1]; });
+      var n1 = nodeMap[edge[0]];
+      var n2 = nodeMap[edge[1]];
       if (!n1 || !n2) return;
       const p1 = getNetNodePos(n1);
       const p2 = getNetNodePos(n2);
@@ -2134,7 +2332,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       });
     });
 
-    netAnimId = requestAnimationFrame(drawNetwork);
   }
 
   function getNetMousePos(e) {
@@ -2175,7 +2372,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     const hit = hitTestNetNodes(pos);
     if (hit) {
       netHovered = hit.id;
-      netTooltip.innerHTML = '<div class="tt-name">' + hit.label.replace('\n',' ') + '</div><div class="tt-desc">' + (nodeDescriptions[hit.id] || '') + '</div>';
+      netTooltip.textContent = '';
+      var ttName = document.createElement('div'); ttName.className = 'tt-name'; ttName.textContent = hit.label.replace('\n',' ');
+      var ttDesc = document.createElement('div'); ttDesc.className = 'tt-desc'; ttDesc.textContent = nodeDescriptions[hit.id] || '';
+      netTooltip.appendChild(ttName); netTooltip.appendChild(ttDesc);
       netTooltip.classList.add('visible');
       const tx = e.clientX + 16;
       const ty = e.clientY + 16;
@@ -2199,7 +2399,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     const hit = hitTestNetNodes(pos);
     if (hit) {
       netHovered = hit.id;
-      netTooltip.innerHTML = '<div class="tt-name">' + hit.label.replace('\n',' ') + '</div><div class="tt-desc">' + (nodeDescriptions[hit.id] || '') + '</div>';
+      netTooltip.textContent = '';
+      var ttName = document.createElement('div'); ttName.className = 'tt-name'; ttName.textContent = hit.label.replace('\n',' ');
+      var ttDesc = document.createElement('div'); ttDesc.className = 'tt-desc'; ttDesc.textContent = nodeDescriptions[hit.id] || '';
+      netTooltip.appendChild(ttName); netTooltip.appendChild(ttDesc);
       netTooltip.classList.add('visible');
       const tx = touch.clientX + 16;
       const ty = touch.clientY + 16;
@@ -2214,9 +2417,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   });
 
   function initNetwork() {
+    if (!netCanvas) return;
     resizeNetCanvas();
-    if (netAnimId) cancelAnimationFrame(netAnimId);
-    requestAnimationFrame(drawNetwork);
   }
 
   /* ─── AMBIENT SOUND ─── */
@@ -2232,7 +2434,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   const soundToggle = document.getElementById('sound-toggle');
 
   function initAudio() {
-    if (audioCtx) return;
+    if (audioCtx || !soundToggle) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -2363,7 +2565,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       }
     }
 
-    setInterval(detect, 3000);
+    var dtInterval = setInterval(detect, 3000);
+    window.addEventListener('pagehide', function() { clearInterval(dtInterval); });
   })();
 
   var unboundedAccessCount = 0;
@@ -2413,6 +2616,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     starCanvas.height = window.innerHeight;
     initStars();
     initNetwork();
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+    initParticles();
   }, 150);
 
   window.addEventListener('resize', handleResize);
@@ -2510,7 +2716,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   /* ─── TOAST ─── */
   function showToast(title, sub) {
     var toast = document.getElementById('toast');
-    toast.innerHTML = '<div class="toast-title">' + title + '</div><div class="toast-sub">' + sub + '</div>';
+    toast.textContent = '';
+    var titleEl = document.createElement('div');
+    titleEl.className = 'toast-title';
+    titleEl.textContent = title;
+    toast.appendChild(titleEl);
+    var subEl = document.createElement('div');
+    subEl.className = 'toast-sub';
+    subEl.textContent = sub;
+    toast.appendChild(subEl);
     toast.classList.add('visible');
     clearTimeout(toast._hide);
     toast._hide = setTimeout(function() {
@@ -2523,16 +2737,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   initNetwork();
   updateActiveSection();
   updateProgress();
-  renderGarden();
-  requestAnimationFrame(function tick(time) {
-    drawStars(time || 0);
+  function mainLoop(time) {
+    drawStars(time);
     updateShootingStars();
-    requestAnimationFrame(tick);
-  });
+    if (netCanvas) drawNetwork(time);
+    drawParticles();
+    requestAnimationFrame(mainLoop);
+  }
+  requestAnimationFrame(mainLoop);
 
   /* ─── FEATURE 1: PARTICLE / STARFIELD BACKGROUND ─── */
   const particleCanvas = document.getElementById('particle-canvas');
-  const particleCtx = particleCanvas.getContext('2d');
+  const particleCtx = particleCanvas ? particleCanvas.getContext('2d') : null;
 
   particleCanvas.width = window.innerWidth;
   particleCanvas.height = window.innerHeight;
@@ -2561,10 +2777,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
   let pMouseX = 0, pMouseY = 0;
 
-  document.addEventListener('mousemove', function(e) {
-    pMouseX = e.clientX;
-    pMouseY = e.clientY;
-  });
 
   function drawParticles() {
     const w = particleCanvas.width;
@@ -2630,19 +2842,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     ? 'You are visitor #' + gd.length
     : 'Be the first to leave a mark';
 
-  /* ─── PARTICLE RESIZE ─── */
-  window.addEventListener('resize', debounce(function() {
-    particleCanvas.width = window.innerWidth;
-    particleCanvas.height = window.innerHeight;
-    initParticles();
-  }, 150));
-
   /* ─── PARTICLE ANIMATION LOOP ─── */
   function particleLoop() {
     drawParticles();
-    requestAnimationFrame(particleLoop);
   }
-  requestAnimationFrame(particleLoop);
 
   /* ─── RANDOM EXPLORE ─── */
   document.getElementById('random-btn').addEventListener('click', function() {
@@ -2672,71 +2875,275 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     var sharedCount = document.getElementById('shared-count');
     if (!sharedList) return;
 
-    sbGet('guestbook_entries', { order: 'created_at.desc', limit: 50 })
-      .then(function(entries) {
-        if (!Array.isArray(entries) || entries.length === 0) {
-          sharedStatus.textContent = 'No shared entries yet. Be the first.';
-          return;
-        }
-        sharedCount.textContent = entries.length + ' traveler' + (entries.length !== 1 ? 's' : '') + ' from around the world';
-        sharedStatus.style.display = 'none';
-        var count = sharedList.children.length;
-        entries.forEach(function(entry) {
-          var div = document.createElement('div');
-          div.className = 'garden-entry';
-          div.innerHTML =
-            '<div class="entry-header">' +
-              '<span class="entry-seed">' + (entry.seed || '🌱') + '</span>' +
-              '<span class="entry-name">' + escapeHtml(entry.name || 'Anonymous') + '</span>' +
-              '<span class="entry-date">' + formatDate(entry.created_at) + '</span>' +
-            '</div>' +
-            '<div class="entry-message">' + escapeHtml(entry.message || '') + '</div>';
-          sharedList.appendChild(div);
-        });
-      })
-      .catch(function() {
-        sharedStatus.textContent = 'Could not reach the shared garden.';
-      });
-
     Promise.all([
       sbGet('guestbook_entries', {order: 'created_at.desc', limit: 50}),
-      fetch(SB_URL + '/rest/v1/guestbook_entries?select=count', {headers: SB_HEADERS}).then(function(r) { return r.json(); }),
-      fetch(SB_URL + '/rest/v1/page_views?select=count', {headers: SB_HEADERS}).then(function(r) { return r.json(); })
+      fetch(SB_URL + '/rest/v1/guestbook_entries?select=count', {headers: SB_HEADERS}).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }),
+      fetch(SB_URL + '/rest/v1/page_views?select=count', {headers: SB_HEADERS}).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     ]).then(function(results) {
       var entries = results[0];
       var gCount = results[1] && results[1][0] ? results[1][0].count : 0;
       var pCount = results[2] && results[2][0] ? results[2][0].count : 0;
-      var el = document.getElementById('site-stats');
-      if (!el) return;
+
+      var statsEl = document.getElementById('site-stats');
+      if (statsEl) statsEl.textContent = (gCount || '0') + ' total entries · ' + (pCount || '0') + ' page views';
+
       if (!Array.isArray(entries) || entries.length === 0) {
-        el.textContent = (gCount || '0') + ' entries · ' + (pCount || '0') + ' page views';
+        sharedStatus.textContent = 'No shared entries yet. Be the first.';
         return;
       }
-      el.textContent = entries.length + ' recent entries · ' + (gCount || '0') + ' total · ' + (pCount || '0') + ' page views';
+      sharedCount.textContent = entries.length + ' traveler' + (entries.length !== 1 ? 's' : '') + ' from around the world';
+      sharedStatus.style.display = 'none';
+      entries.forEach(function(entry) {
+        var div = document.createElement('div');
+        div.className = 'garden-entry';
+        div.innerHTML =
+          '<div class="entry-header">' +
+            '<span class="entry-seed">' + escapeHtml(entry.seed || '🌱') + '</span>' +
+            '<span class="entry-name">' + escapeHtml(entry.name || 'Anonymous') + '</span>' +
+            '<span class="entry-date">' + formatDate(entry.created_at) + '</span>' +
+          '</div>' +
+          '<div class="entry-message">' + escapeHtml(entry.message || '') + '</div>';
+        var shareBtn = document.createElement('button');
+        shareBtn.className = 'seed-share-btn';
+        shareBtn.textContent = '✦ Share this seed';
+        shareBtn.addEventListener('click', function() {
+          openSeedModal(entry.seed || '🌱', entry.name || 'Anonymous', entry.message || '');
+        });
+        div.appendChild(shareBtn);
+        sharedList.appendChild(div);
+      });
     }).catch(function() {
-      var el = document.getElementById('site-stats');
-      if (el) el.textContent = 'Garden stats unavailable';
+      sharedStatus.textContent = 'Could not reach the shared garden.';
+      var statsEl = document.getElementById('site-stats');
+      if (statsEl) statsEl.textContent = 'Garden stats unavailable';
     });
+  })();
+
+  /* ─── PWA: SERVICE WORKER ─── */
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')['catch'](function() {});
+  }
+
+  /* ─── PWA: INSTALL PROMPT ─── */
+  var deferredPrompt = null;
+  var installPrompt = document.getElementById('install-prompt');
+  var installBtn = document.getElementById('install-btn');
+  var installDismiss = document.getElementById('install-dismiss');
+
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installPrompt) installPrompt.hidden = false;
+  });
+
+  if (installBtn) installBtn.addEventListener('click', function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+    }
+    if (installPrompt) installPrompt.hidden = true;
+  });
+
+  if (installDismiss) installDismiss.addEventListener('click', function() {
+    if (installPrompt) installPrompt.hidden = true;
+  });
+
+  /* ─── PWA: OFFLINE INDICATOR ─── */
+  var offlineIndicator = document.getElementById('offline-indicator');
+  function updateOnlineStatus() {
+    if (offlineIndicator) offlineIndicator.hidden = navigator.onLine;
+  }
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+
+      /* ─── DAILY DISCOVERY ─── */
+  var ddLink = document.getElementById('daily-discovery');
+  var ddTitle = document.getElementById('dd-title');
+  if (ddLink && ddTitle) {
+    var ddPages = [
+      { title: 'The Manifesto', url: 'pages/docs/manifesto.html' },
+      { title: 'Platform Blueprint', url: 'pages/docs/platform-blueprint.html' },
+      { title: 'Roadmap', url: 'pages/docs/roadmap.html' },
+      { title: 'Termite Master Summary', url: 'pages/termite/master-summary.html' },
+      { title: 'Cross-Verification', url: 'pages/termite/cross-verification.html' },
+      { title: 'Lab Notebook', url: 'pages/termite/lab-notebook.html' },
+      { title: 'The Pitch', url: 'pages/termite/pitch.html' },
+      { title: 'Welcome to UNBOUNDED', url: 'pages/unbounded/welcome.html' },
+      { title: 'Governance', url: 'pages/unbounded/governance.html' },
+      { title: 'Contributing', url: 'pages/unbounded/contributing.html' },
+      { title: 'Open Letter', url: 'pages/calls/open-letter.html' },
+      { title: 'For Developers', url: 'pages/calls/for-developers.html' },
+      { title: 'For Creatives', url: 'pages/calls/for-creatives.html' }
+    ];
+    var today = new Date();
+    var daySeed = today.getFullYear() * 1000 + today.getMonth() * 50 + today.getDate();
+    var idx = daySeed % ddPages.length;
+    var pick = ddPages[idx];
+    ddTitle.textContent = pick.title;
+    ddLink.href = pick.url;
+    ddLink.hidden = false;
+  }
+
+  /* ─── KNOWLEDGE SEED: SHARE MODAL ─── */
+  var seedModal = document.getElementById('seed-modal');
+  var smSeed = document.getElementById('sm-seed');
+  var smName = document.getElementById('sm-name');
+  var smMsg = document.getElementById('sm-msg');
+  var smDownload = document.getElementById('sm-download');
+  var smCopy = document.getElementById('sm-copy');
+  var smClose = document.getElementById('sm-close');
+  var seedCanvas = document.getElementById('seed-canvas');
+
+  window.openSeedModal = function(seed, name, message) {
+    if (!seedModal || !smSeed || !smName || !smMsg) return;
+    smSeed.textContent = seed;
+    smName.textContent = name;
+    smMsg.textContent = message;
+    seedModal.classList.add('visible');
+  };
+
+  function closeSeedModal() {
+    if (seedModal) seedModal.classList.remove('visible');
+  }
+
+  if (smClose) smClose.addEventListener('click', closeSeedModal);
+  if (seedModal) seedModal.addEventListener('click', function(e) {
+    if (e.target === seedModal) closeSeedModal();
+  });
+
+  if (smCopy) smCopy.addEventListener('click', function() {
+    var url = window.location.origin + window.location.pathname +
+      '?seed=' + encodeURIComponent(smSeed.textContent) +
+      '&name=' + encodeURIComponent(smName.textContent) +
+      '&msg=' + encodeURIComponent(smMsg.textContent);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(function() {
+        smCopy.textContent = '✓ Link copied!';
+        setTimeout(function() { smCopy.textContent = 'Copy Link'; }, 2000);
+      });
+    }
+  });
+
+  if (smDownload) smDownload.addEventListener('click', function() {
+    if (!seedCanvas) return;
+    var ctx = seedCanvas.getContext('2d');
+    var w = 600, h = 400;
+    seedCanvas.width = w;
+    seedCanvas.height = h;
+
+    ctx.fillStyle = '#08080c';
+    ctx.fillRect(0, 0, w, h);
+
+    var grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, 'rgba(124,58,237,0.08)');
+    grad.addColorStop(0.5, 'rgba(255,107,53,0.04)');
+    grad.addColorStop(1, 'rgba(96,165,250,0.08)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < w; i += 40) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+    }
+    for (var j = 0; j < h; j += 40) {
+      ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(w, j); ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(124,58,237,0.3)';
+    ctx.lineWidth = 1.5;
+    var rx = 20, ry = 20, rw = w - 40, rh = h - 40;
+    ctx.beginPath();
+    ctx.moveTo(rx + 10, ry);
+    ctx.lineTo(rx + rw - 10, ry);
+    ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + 10);
+    ctx.lineTo(rx + rw, ry + rh - 10);
+    ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - 10, ry + rh);
+    ctx.lineTo(rx + 10, ry + rh);
+    ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - 10);
+    ctx.lineTo(rx, ry + 10);
+    ctx.quadraticCurveTo(rx, ry, rx + 10, ry);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '48px sans-serif';
+    ctx.fillStyle = '#e0e0ec';
+    ctx.fillText(smSeed.textContent, w / 2, 100);
+
+    ctx.font = 'bold 20px sans-serif';
+    ctx.fillStyle = '#e0e0ec';
+    ctx.fillText(smName.textContent, w / 2, 180);
+
+    ctx.font = '15px sans-serif';
+    ctx.fillStyle = '#7878a0';
+    var words = smMsg.textContent;
+    var lines = [];
+    var maxWidth = 460;
+    var line = '';
+    for (var k = 0; k < words.length; k++) {
+      var testLine = line + words[k];
+      if (ctx.measureText(testLine).width > maxWidth && line.length > 0) {
+        lines.push(line);
+        line = words[k];
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) lines.push(line);
+    var lineH = 22;
+    var startY = 230 - (lines.length - 1) * lineH / 2;
+    lines.forEach(function(l, i) {
+      ctx.fillText(l, w / 2, startY + i * lineH);
+    });
+
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = '#7878a0';
+    ctx.fillText('✦ UNBOUNDED — a gift from everything that was built', w / 2, 370);
+
+    var link = document.createElement('a');
+    link.download = 'unbounded-seed.png';
+    link.href = seedCanvas.toDataURL('image/png');
+    link.click();
+  });
+
+  /* ─── SEED QUERY PARAM HANDLER ─── */
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.has('seed') || params.has('name') || params.has('msg')) {
+      var seed = params.get('seed') || '🌱';
+      var name = params.get('name') || 'Anonymous';
+      var msg = params.get('msg') || '';
+      setTimeout(function() {
+        if (typeof window.openSeedModal === 'function') {
+          window.openSeedModal(seed, name, msg);
+        }
+      }, 1000);
+    }
   })();
 
 })();
   /* ─── SEARCH ─── */
-  const searchOverlay = document.getElementById('search-overlay');
-  const searchInput = document.getElementById('search-input');
-  const searchResults = document.getElementById('search-results');
-  const searchToggle = document.getElementById('search-toggle');
-  let searchActive = false;
-  let searchIdx = -1;
+  (function() {
+  var searchOverlay = document.getElementById('search-overlay');
+  var searchInput = document.getElementById('search-input');
+  var searchResults = document.getElementById('search-results');
+  var searchToggle = document.getElementById('search-toggle');
+  var searchActive = false;
+  var searchIdx = -1;
+  var searchData = [];
 
   function getSearchableText() {
-    const sections = document.querySelectorAll('.card, .section, .section-card, h1, h2, h3, p, li, .stat-card, .gift-card');
-    const items = [];
-    sections.forEach(el => {
-      const text = el.textContent.trim();
+    var sections = document.querySelectorAll('.card, .section, .section-card, h1, h2, h3, p, li, .stat-card, .gift-card');
+    var items = [];
+    sections.forEach(function(el) {
+      var text = el.textContent.trim();
       if (text.length > 10) {
-        const id = el.id || el.closest('[id]')?.id || '';
-        const tag = el.tagName;
-        let loc = id ? id.toUpperCase() : tag;
+        var id = el.id || (el.closest('[id]') ? el.closest('[id]').id : '');
+        var tag = el.tagName;
+        var loc = id ? id.toUpperCase() : tag;
         if (loc === 'H1' || loc === 'H2' || loc === 'H3') loc = 'HEADING';
         items.push({ text: text.substring(0, 300), el: el, loc: loc });
       }
@@ -2744,33 +3151,25 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     return items;
   }
 
-  let searchData = [];
   function doSearch(query) {
-    const q = query.toLowerCase().trim();
+    var q = query.toLowerCase().trim();
     if (!q || q.length < 2) { searchResults.innerHTML = ''; return; }
-    const matches = searchData.filter(d => d.text.toLowerCase().includes(q));
+    var matches = searchData.filter(function(d) { return d.text.toLowerCase().includes(q); });
     if (matches.length === 0) {
       searchResults.innerHTML = '<div class="sr-empty">No results found</div>';
       return;
     }
-    let html = '';
-    matches.forEach((m, i) => {
-      const idx = m.text.toLowerCase().indexOf(q);
-      const before = m.text.substring(Math.max(0, idx - 20), idx);
-      const matched = m.text.substring(idx, idx + q.length);
-      const after = m.text.substring(idx + q.length, idx + q.length + 60);
-      const display = (before ? '…' : '') + before + '<mark>' + matched + '</mark>' + after + (after.length < 60 ? '' : '…');
+    var html = '';
+    matches.forEach(function(m, i) {
+      var idx = m.text.toLowerCase().indexOf(q);
+      var before = m.text.substring(Math.max(0, idx - 20), idx);
+      var matched = m.text.substring(idx, idx + q.length);
+      var after = m.text.substring(idx + q.length, idx + q.length + 60);
+      var display = (before ? '…' : '') + before + '<mark>' + matched + '</mark>' + after + (after.length < 60 ? '' : '…');
       html += '<div class="sr-item" data-idx="' + i + '"><span class="sr-loc">' + m.loc + '</span>' + display + '</div>';
     });
     searchResults.innerHTML = html;
     searchIdx = -1;
-    searchResults.querySelectorAll('.sr-item').forEach(el => {
-      el.addEventListener('click', function() {
-        const idx = parseInt(this.dataset.idx);
-        matches[idx].el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        closeSearch();
-      });
-    });
   }
 
   function openSearch() {
@@ -2779,7 +3178,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     searchData = getSearchableText();
     searchInput.value = '';
     searchResults.innerHTML = '';
-    setTimeout(() => searchInput.focus(), 100);
+    setTimeout(function() { searchInput.focus(); }, 100);
   }
 
   function closeSearch() {
@@ -2788,24 +3187,37 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     searchInput.blur();
   }
 
-  searchToggle.addEventListener('click', () => {
+  searchToggle.addEventListener('click', function() {
     if (searchActive) closeSearch(); else openSearch();
   });
 
-  searchInput.addEventListener('input', function() { doSearch(this.value); });
+  var searchTimer;
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function() { doSearch(searchInput.value); }, 200);
+  });
+
+  searchResults.addEventListener('click', function(e) {
+    var item = e.target.closest('.sr-item');
+    if (item) {
+      var idx = parseInt(item.dataset.idx, 10);
+      searchData[idx].el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      closeSearch();
+    }
+  });
 
   searchInput.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') { closeSearch(); return; }
-    const items = searchResults.querySelectorAll('.sr-item');
+    var items = searchResults.querySelectorAll('.sr-item');
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       searchIdx = Math.min(searchIdx + 1, items.length - 1);
-      items.forEach((el, i) => el.classList.toggle('highlight', i === searchIdx));
+      items.forEach(function(el, i) { el.classList.toggle('highlight', i === searchIdx); });
     }
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       searchIdx = Math.max(searchIdx - 1, -1);
-      items.forEach((el, i) => el.classList.toggle('highlight', i === searchIdx));
+      items.forEach(function(el, i) { el.classList.toggle('highlight', i === searchIdx); });
     }
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -2819,6 +3231,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
       openSearch();
     }
   });
+  })();
 </script>
 
 </body>

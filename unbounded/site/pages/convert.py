@@ -16,8 +16,12 @@ TEMPLATE = r'''<!DOCTYPE html>
 <meta property="og:description" content="{meta_desc}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/{rel_path}">
+<meta property="og:image" content="https://raw.githubusercontent.com/Puronbo/termite-biotech-and-unbounded/main/unbounded/site/favicon.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0e0e16">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <title>{title}</title>
 <style>
@@ -56,7 +60,7 @@ body::before {{
 h1 {{
   font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   line-height: 1.3;
 }}
 h2 {{ font-size: 1.4rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--fg); }}
@@ -84,7 +88,8 @@ blockquote {{
 }}
 table {{
   width: 100%; border-collapse: collapse; margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.9rem; display: block; overflow-x: auto;
+  -webkit-overflow-scrolling: touch; max-width: 100%;
 }}
 th, td {{
   padding: 0.5rem 0.75rem; text-align: left;
@@ -106,6 +111,17 @@ img {{ max-width: 100%; border-radius: var(--radius); }}
 @media (max-width: 600px) {{
   .wrapper {{ padding: 1.5rem 1rem; }}
   h1 {{ font-size: 1.5rem; }}
+  pre {{ font-size: 0.8rem; }}
+}}
+a:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2px; }}
+@media print {{
+  body {{ background: #fff; color: #000; }}
+  body::before {{ display: none; }}
+  .top-nav, .foot-nav {{ display: none; }}
+  h1 {{ -webkit-text-fill-color: initial; background: none; color: #000; }}
+}}
+@media (prefers-reduced-motion: reduce) {{
+  *, *::before, *::after {{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }}
 }}
 </style>
 </head>
@@ -126,8 +142,8 @@ img {{ max-width: 100%; border-radius: var(--radius); }}
 </div>
 </div>
 <script>
-(function(){{var p=location.pathname;var h=p.substring(p.lastIndexOf('/')+1);var r=JSON.parse(localStorage.getItem('unbounded-history')||'[]');if(!r.includes(h)){{r.unshift(h);if(r.length>20)r.length=20;localStorage.setItem('unbounded-history',JSON.stringify(r))}}}})();
-(function(){{var u='https://aurxoemycvcywtdwahuc.supabase.co';var k='sb_publishable__bSnqp9ioikLs515Uxtudg_8HtvJPuE';var hd={{apikey:k,'Authorization':'Bearer '+k,'Content-Type':'application/json'}};var s=localStorage.getItem('unbounded-session')||'s_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('unbounded-session',s);var pn=location.pathname.split('/').pop()||'index';fetch(u+'/rest/v1/page_views',{{method:'POST',headers:Object.assign({{Prefer:'return=minimal'}},hd),body:JSON.stringify({{page:pn,session_id:s}})}});fetch(u+'/rest/v1/sessions?on_conflict=id',{{method:'POST',headers:Object.assign({{Prefer:'resolution=merge-duplicates'}},hd),body:JSON.stringify({{id:s,last_active:new Date().toISOString()}})}});var lb=localStorage.getItem('unbounded-heartbeat');if(!lb||Date.now()-parseInt(lb)>86400000){{fetch(u+'/rest/v1/heartbeats',{{method:'POST',headers:Object.assign({{Prefer:'return=minimal'}},hd),body:'{{}}'}});localStorage.setItem('unbounded-heartbeat',''+Date.now())}}}})();
+(function(){{var p=location.pathname;var h=p.substring(p.lastIndexOf('/')+1);var r;try{{r=JSON.parse(localStorage.getItem('unbounded-history')||'[]')}}catch(e){{r=[]}};if(!r.includes(h)){{r.unshift(h);if(r.length>20)r.length=20;try{{localStorage.setItem('unbounded-history',JSON.stringify(r))}}catch(e){{}}}}}})();
+(function(){{var u='https://aurxoemycvcywtdwahuc.supabase.co';var k='sb_publishable__bSnqp9ioikLs515Uxtudg_8HtvJPuE';var hd={{apikey:k,'Authorization':'Bearer '+k,'Content-Type':'application/json'}};var s;try{{s=localStorage.getItem('unbounded-session')}}catch(e){{s=''}};if(!s){{s='s_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);try{{localStorage.setItem('unbounded-session',s)}}catch(e){{}}}};var pn=location.pathname.split('/').pop()||'index';fetch(u+'/rest/v1/page_views',{{method:'POST',headers:Object.assign({{Prefer:'return=minimal'}},hd),body:JSON.stringify({{page:pn,session_id:s}})}}).catch(function(){{}});fetch(u+'/rest/v1/sessions?on_conflict=id',{{method:'POST',headers:Object.assign({{Prefer:'resolution=merge-duplicates'}},hd),body:JSON.stringify({{id:s,last_active:new Date().toISOString()}})}}).catch(function(){{}});var lb;try{{lb=localStorage.getItem('unbounded-heartbeat')}}catch(e){{lb=''}};if(!lb||Date.now()-parseInt(lb)>86400000){{fetch(u+'/rest/v1/heartbeats',{{method:'POST',headers:Object.assign({{Prefer:'return=minimal'}},hd),body:'{{}}'}}).catch(function(){{}});try{{localStorage.setItem('unbounded-heartbeat',''+Date.now())}}catch(e){{}}}}}})();
 </script>
 </body>
 </html>'''
@@ -217,6 +233,11 @@ def generate_index(files, section_name, output_path):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{section_name} &mdash; UNBOUNDED</title>
+<meta name="description" content="{section_name} — documents and resources from the UNBOUNDED project.">
+<meta property="og:title" content="{section_name} &mdash; UNBOUNDED">
+<meta property="og:description" content="{section_name} — documents and resources from the UNBOUNDED project.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://raw.githubusercontent.com/Puronbo/termite-biotech-and-unbounded/main/unbounded/site/favicon.svg">
 <meta name="theme-color" content="#0e0e16">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <style>
@@ -225,7 +246,7 @@ def generate_index(files, section_name, output_path):
 body {{ font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; }}
 body::before {{ content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.06) 0%, transparent 70%); pointer-events: none; z-index: 0; }}
 .wrapper {{ max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem; position: relative; z-index: 1; }}
-h1 {{ font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
+h1 {{ font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }}
 .sub {{ color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }}
 .back {{ display: inline-block; margin-bottom: 1.5rem; color: var(--accent); text-decoration: none; font-size: 0.85rem; }}
 .back:hover {{ color: var(--accent2); }}
@@ -333,6 +354,11 @@ def main():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Documentation &mdash; UNBOUNDED + Termite Research</title>
+<meta name="description" content="All project documents across UNBOUNDED, Termite Research, and Calls sections.">
+<meta property="og:title" content="Documentation &mdash; UNBOUNDED + Termite Research">
+<meta property="og:description" content="All project documents across UNBOUNDED, Termite Research, and Calls sections.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://raw.githubusercontent.com/Puronbo/termite-biotech-and-unbounded/main/unbounded/site/favicon.svg">
 <meta name="theme-color" content="#0e0e16">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <style>
@@ -341,7 +367,7 @@ def main():
 body {{ font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; }}
 body::before {{ content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.06) 0%, transparent 70%); pointer-events: none; z-index: 0; }}
 .wrapper {{ max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem; position: relative; z-index: 1; }}
-h1 {{ font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
+h1 {{ font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }}
 .sub {{ color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }}
 .back {{ display: inline-block; margin-bottom: 1.5rem; color: var(--accent); text-decoration: none; font-size: 0.85rem; }}
 .back:hover {{ color: var(--accent2); }}

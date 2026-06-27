@@ -1,0 +1,58 @@
+{
+  "name": "UNBOUNDED — Termite Research & New Media",
+  "short_name": "UNBOUNDED",
+  "description": "An interactive, generative space blending termite research, biofuel science, and new media into a single living experience.",
+  "start_url": "portal.html",
+  "scope": ".",
+  "id": "/unbounded/portal",
+  "display": "standalone",
+  "background_color": "#08080c",
+  "theme_color": "#0e0e16",
+  "orientation": "any",
+  "categories": ["education", "science", "entertainment"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Portal",
+      "short_name": "Portal",
+      "description": "Enter the interactive portal",
+      "url": "portal.html"
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Data",
+      "description": "Biofuel research dashboard",
+      "url": "dashboard.html"
+    },
+    {
+      "name": "Manifesto",
+      "short_name": "Manifesto",
+      "description": "Read the UNBOUNDED manifesto",
+      "url": "pages/docs/manifesto.html"
+    },
+    {
+      "name": "Master Summary",
+      "short_name": "Termites",
+      "description": "Termite research master summary",
+      "url": "pages/termite/master-summary.html"
+    }
+  ],
+  "display_override": ["window-controls-overlay", "standalone"],
+  "launch_handler": {
+    "client_mode": "auto"
+  }
+}
