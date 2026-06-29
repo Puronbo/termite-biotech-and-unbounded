@@ -30,7 +30,7 @@ header .subtitle { color: var(--muted); font-size: 14px; margin-left: auto; }
 .file-selector label { font-size: 13px; color: var(--muted); }
 .file-selector select { background: var(--bg); color: var(--fg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 14px; cursor: pointer; outline: none; min-width: 240px; transition: border-color 0.2s; }
 .file-selector select:hover, .file-selector select:focus { border-color: var(--accent); }
-.btn-header { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.btn-header { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, color 0.2s, border-color 0.2s, background 0.2s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .btn-header:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,58,237,0.3); }
 .btn-header.accent2 { background: var(--accent2); }
 .btn-header.accent2:hover { box-shadow: 0 4px 20px rgba(255,107,53,0.3); }
@@ -97,7 +97,7 @@ tr:hover td { background: rgba(124,58,237,0.08); }
 .toast .toast-msg { flex: 1; line-height: 1.4; }
 footer { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 20px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 20px; }
 footer .sig { color: var(--accent); }
-.portal-link { background: transparent; color: var(--accent2); border: 1px solid var(--accent2); border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.portal-link { background: transparent; color: var(--accent2); border: 1px solid var(--accent2); border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .portal-link:hover { background: var(--accent2); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,107,53,0.3); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
