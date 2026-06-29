@@ -1,5 +1,5 @@
 # Core build & packaging
-setuptools>=68
+setuptools>=82.0.1
 
 # Testing & validation
 pytest>=7.4
