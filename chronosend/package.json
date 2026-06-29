@@ -28,7 +28,7 @@
     "db:setup": "npm run migrate && npm run seed",
     "prisma:generate": "npm run prisma:generate -w apps/server",
     "prisma:studio": "npm run prisma:studio -w apps/server",
-    "clean": "rm -rf apps/*/dist packages/*/dist node_modules",
+    "clean": "npx rimraf apps/*/dist packages/*/dist node_modules",
     "analyze:termite": "python termite-analysis.py --data-dir ./examples/termite",
     "demo": "npm run build -w packages/shared && npm test && npm run analyze:termite"
   },

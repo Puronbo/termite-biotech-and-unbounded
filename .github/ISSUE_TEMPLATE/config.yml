@@ -1,11 +1,11 @@
 blank_issues_enabled: true
 contact_links:
   - name: Discussions
-    url: https://github.com/termite-biotech-unbounded/discussions
+    url: https://github.com/Puronbo/termite-biotech-and-unbounded/discussions
     about: Please ask and answer questions here, or start a general conversation.
   - name: Security Policy
-    url: https://github.com/termite-biotech-unbounded/SECURITY.md
+    url: https://github.com/Puronbo/termite-biotech-and-unbounded/SECURITY.md
     about: Please report security vulnerabilities here. Do not file public bug reports for security issues.
   - name: Community Governance
-    url: https://github.com/termite-biotech-unbounded/GOVERNANCE.md
+    url: https://github.com/Puronbo/termite-biotech-and-unbounded/blob/main/unbounded/GOVERNANCE.md
     about: Read about our decentralized, consent-based governance model before contributing.

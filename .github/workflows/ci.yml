@@ -7,6 +7,42 @@ on:
     branches: [main]
 
 jobs:
+  python-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pytest
+      - name: Validate CSV data files
+        run: python tests/validate_data.py
+      - name: Run Python test suite
+        run: python -m pytest tests/ -v
+      - name: Run termite analysis pipeline
+        run: python chronosend/termite-analysis.py --data-dir chronosend/examples/termite
+      - name: Verify analysis output is valid JSON
+        run: python -c "
+import json
+d = json.load(open('chronosend/examples/termite/analysis_results.json'))
+assert 'cellulase' in d
+assert 'fermentation' in d
+assert 'waste_test' in d
+assert 'calibration' in d
+print('PASS: analysis_results.json contains all 4 sections')
+"
+      - name: Cross-validate analysis consistency
+        run: python -c "
+import json
+d = json.load(open('chronosend/examples/termite/analysis_results.json'))
+assert d['cellulase']['top_activity'] > 0, 'top_activity must be positive'
+assert d['fermentation']['overall_max_ethanol'] > 0, 'max ethanol must be positive'
+assert d['calibration']['r_squared'] > 0.99, 'R² must be > 0.99'
+print('PASS: cross-validation checks OK')
+"
+
   link-check:
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +55,42 @@ jobs:
             --no-progress
             --exclude 'github.com'
             --exclude 'http://localhost'
+            --exclude 'https://creativecommons.org'
             './**/*.md'
             './**/*.html'
       - name: Report link status
         run: echo "Link check complete."
+
+  node-checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chronosend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: chronosend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build shared package
+        run: npm run build -w packages/shared
+      - name: Type check
+        run: npm run type-check
+        continue-on-error: true
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+      - name: Run backend tests
+        run: npm run test:server
+        env:
+          DATABASE_URL: postgresql://localhost:5432/test
+          JWT_SECRET: test-secret
+          JWT_REFRESH_SECRET: test-refresh-secret
+          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef
+          CSRF_SECRET: test-csrf-secret
+          NODE_ENV: test
+        continue-on-error: true

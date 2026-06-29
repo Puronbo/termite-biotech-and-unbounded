@@ -37,3 +37,8 @@ Desktop.ini
 *.log
 *.db
 *.sqlite
+
+# Python testing
+.pytest_cache/
+*.egg-info/
+

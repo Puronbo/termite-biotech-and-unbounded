@@ -18,6 +18,14 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 
 
+class ProjectEncoder(json.JSONEncoder):
+    """JSON encoder that handles ProjectStatus and Priority enums."""
+    def default(self, obj):
+        if isinstance(obj, (ProjectStatus, Priority)):
+            return obj.value
+        return super().default(obj)
+
+
 class ProjectStatus(Enum):
     """Project status enumeration."""
     NOT_STARTED = "Not Started"
@@ -94,7 +102,7 @@ class ProjectTracker:
                     data = json.load(f)
                     # Convert dictionaries back to objects
                     for project_id, project_data in data.get('projects', {}).items():
-                        tasks = [Task(**task_data) for task_data in project_data.get('tasks', [])]
+                        tasks = [Task(**{k: ProjectStatus(v) if k == 'status' else Priority(v) if k == 'priority' else v for k, v in task_data.items()}) for task_data in project_data.get('tasks', [])]
                         milestones = [Milestone(**milestone_data) for milestone_data in project_data.get('milestones', [])]
                         project = Project(
                             id=project_id,
@@ -140,8 +148,8 @@ class ProjectTracker:
             data['projects'][project_id] = project_data
         
         try:
-            with open(self.data_file, 'w') as f:
-                json.dump(data, f, indent=2)
+            with open(self.data_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, cls=ProjectEncoder)
             print(f"Data saved to {self.data_file}")
         except Exception as e:
             print(f"Error saving data: {e}")
@@ -741,7 +749,7 @@ class ProjectTracker:
             md_content.append(f"\n---\n")
         
         try:
-            with open(filename, 'w') as f:
+            with open(filename, 'w', encoding='utf-8') as f:
                 f.write("\n".join(md_content))
             print(f"Report exported to {filename}")
         except Exception as e:
