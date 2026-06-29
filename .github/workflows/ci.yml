@@ -6,7 +6,31 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  lint-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: pip install ruff
+      - name: Lint with Ruff
+        run: ruff check --output-format=github .
+
   python-validate:
     runs-on: ubuntu-latest
     steps:
@@ -15,12 +39,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: Install dependencies
-        run: pip install pytest
+        run: pip install pytest pytest-cov
       - name: Validate CSV data files
-        run: python tests/validate_data.py
-      - name: Run Python test suite
-        run: python -m pytest tests/ -v
+        run: python -m pytest tests/test_validate_data.py -v
+      - name: Run Python test suite with coverage
+        run: python -m pytest tests/ -v --cov=. --cov-report=term --cov-report=xml
       - name: Run termite analysis pipeline
         run: python chronosend/termite-analysis.py --data-dir chronosend/examples/termite
       - name: Verify analysis output is valid JSON

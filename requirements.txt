@@ -1,0 +1,21 @@
+# Core build & packaging
+setuptools>=68
+
+# Testing & validation
+pytest>=7.4
+pytest-cov>=4.1
+
+# Linting & formatting
+ruff>=0.3
+
+# Optional: type checking
+# mypy>=1.8
+
+# CLI (used in unbounded/src/gateway.py)
+colorama>=0.4.6
+
+# Web server (used in unbounded/run.py for local dev)
+# No additional deps — uses Python http.server (stdlib)
+
+# CSV data analysis (used in termite-projects & tests)
+# Uses csv & json from stdlib

@@ -8,7 +8,7 @@ This is a monorepo with three sibling projects. Please see the relevant contribu
 
 - **UNBOUNDED platform** — [`unbounded/CONTRIBUTING.md`](./unbounded/CONTRIBUTING.md)
 - **Termite Research Initiative** — [`termite-projects/README.md`](./termite-projects/README.md)
-- **ChronoSend** — [`chronosend/CONTRIBUTING.md`](./chronosend/CONTRIBUTING.md)
+- **ChronoSend** — See the project's own contributing guidelines at [`chronosend/CONTRIBUTING.md`](./chronosend/CONTRIBUTING.md) (coming soon — until then, see [`chronosend/DEPLOYMENT.md`](./chronosend/DEPLOYMENT.md) and [`chronosend/FEATURES.md`](./chronosend/FEATURES.md))
 
 ## Quick Guidelines
 

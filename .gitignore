@@ -41,4 +41,12 @@ Desktop.ini
 # Python testing
 .pytest_cache/
 *.egg-info/
+coverage/
+.coverage
+coverage.xml
+htmlcov/
+
+# Type checking
+.mypy_cache/
+.ruff_cache/
 

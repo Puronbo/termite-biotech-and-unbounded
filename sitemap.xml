@@ -115,4 +115,54 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite-farming/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite-farming/market-analysis.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/termite-farming/farming-methods.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/pest-control/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/pest-control/product-formulations.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/pest-control/certification-roadmap.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/chronosend/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/chronosend/overview.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/chronosend/about.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://Puronbo.github.io/termite-biotech-and-unbounded/unbounded/site/pages/chronosend/deployment.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

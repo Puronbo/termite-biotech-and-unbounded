@@ -48,7 +48,7 @@ Describe the tests you ran to verify your changes. Include relevant details abou
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing tests pass locally with my changes
 - [ ] I have updated any relevant documentation
- - [ ] I have read the [CONTRIBUTING guidelines](../CONTRIBUTING.md)
+- [ ] I have read the [CONTRIBUTING guidelines](../CONTRIBUTING.md)
 - [ ] I agree that my contributions will be licensed under the project's license (CC BY-NC-SA 4.0)
 
 ## Additional Notes
