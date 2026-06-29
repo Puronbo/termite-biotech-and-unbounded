@@ -146,7 +146,7 @@ tr:hover td { background: rgba(124,58,237,0.05); }
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: none;
   text-decoration: none;
 }
@@ -192,7 +192,7 @@ tr:hover td { background: rgba(124,58,237,0.05); }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 2rem;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 .card:hover { border-color: var(--border-light); }
 .card-glass {
