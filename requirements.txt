@@ -6,7 +6,7 @@ pytest>=7.4
 pytest-cov>=4.1
 
 # Linting & formatting
-ruff>=0.3
+ruff>=0.16.6
 
 # Optional: type checking
 # mypy>=1.8
